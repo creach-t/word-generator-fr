@@ -1,14 +1,14 @@
--- Drop tables if they exist
+-- Suppression des tables si elles existent
 DROP TABLE IF EXISTS words;
 DROP TABLE IF EXISTS categories;
 
--- Create categories table
+-- Création de la table des catégories
 CREATE TABLE categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
 );
 
--- Create words table with foreign key to categories
+-- Création de la table des mots avec clé étrangère vers les catégories
 CREATE TABLE words (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     word TEXT NOT NULL,
