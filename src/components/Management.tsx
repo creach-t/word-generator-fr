@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DatabaseService } from '../services/DatabaseService';
 
 const Management = () => {
   const [newCategory, setNewCategory] = useState('');
@@ -11,24 +12,42 @@ const Management = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
   const [words, setWords] = useState<Array<{ id: number; word: string }>>([]);
+  const [dbService, setDbService] = useState<DatabaseService | null>(null);
+
+  useEffect(() => {
+    const initDb = async () => {
+      const service = await DatabaseService.getInstance();
+      setDbService(service);
+      loadCategories(service);
+    };
+    initDb();
+  }, []);
+
+  const loadCategories = (service: DatabaseService) => {
+    const cats = service.getCategories();
+    setCategories(cats);
+  };
 
   const handleAddCategory = async () => {
-    if (!newCategory.trim()) return;
+    if (!newCategory.trim() || !dbService) return;
 
     try {
-      // TODO: Implémenter l'ajout de catégorie avec SQLite
+      await dbService.addCategory(newCategory);
       setNewCategory('');
+      loadCategories(dbService);
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la catégorie:', error);
     }
   };
 
   const handleAddWord = async () => {
-    if (!newWord.trim() || !selectedCategory) return;
+    if (!newWord.trim() || !selectedCategory || !dbService) return;
 
     try {
-      // TODO: Implémenter l'ajout de mot avec SQLite
+      await dbService.addWord(newWord, parseInt(selectedCategory));
       setNewWord('');
+      const words = dbService.getWordsByCategory(parseInt(selectedCategory));
+      setWords(words);
     } catch (error) {
       console.error('Erreur lors de l\'ajout du mot:', error);
     }
