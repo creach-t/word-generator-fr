@@ -2,29 +2,18 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getCategories, getRandomWord } from '@/db';
 
 const Generator = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [generatedWord, setGeneratedWord] = useState<string>('');
   const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
 
-  // Charger les catégories au montage du composant
-  useEffect(() => {
-    try {
-      const loadedCategories = getCategories();
-      setCategories(loadedCategories);
-    } catch (error) {
-      console.error('Erreur lors du chargement des catégories:', error);
-    }
-  }, []);
-
   const generateWord = async () => {
     if (!selectedCategory) return;
     
     try {
-      const word = getRandomWord(parseInt(selectedCategory));
-      setGeneratedWord(word || 'Aucun mot trouvé dans cette catégorie');
+      // TODO: Implémenter la génération de mot avec SQLite
+      setGeneratedWord('Mot généré');
     } catch (error) {
       console.error('Erreur lors de la génération du mot:', error);
       setGeneratedWord('Erreur lors de la génération');
